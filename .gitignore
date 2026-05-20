@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ChromaDB persistence (regenerated from PDFs — can be large)
+chroma_db/
+
+# PDF data files (too large for git; committing test PDFs is optional)
+data/*.pdf

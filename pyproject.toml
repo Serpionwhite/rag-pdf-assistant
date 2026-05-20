@@ -1,0 +1,79 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "docuchat"
+version = "0.1.0"
+description = "Production-quality RAG PDF chatbot"
+readme = "README.md"
+requires-python = ">=3.11"
+
+# Layer 1 core — always installed
+dependencies = [
+    "langchain>=0.3",
+    "langchain-openai>=0.2",
+    "langchain-chroma>=0.1",
+    "langchain-community>=0.3",    # PyPDFLoader lives here
+    "pypdf>=4.0",                  # PDF parsing backend used by PyPDFLoader
+    "openai>=1.30",
+    "chromadb>=0.5",
+    "python-dotenv>=1.0",
+    "pydantic>=2.7",
+]
+
+[project.optional-dependencies]
+# Layer 2: FastAPI web server
+api = [
+    "fastapi>=0.111",
+    "uvicorn[standard]>=0.30",
+    "pydantic-settings>=2.3",
+    "python-multipart>=0.0.9",     # required for file upload endpoints
+]
+# Layer 3: retrieval quality experiments
+retrieval = [
+    "rank-bm25>=0.2",              # BM25 hybrid search
+    "sentence-transformers>=3.0",  # local cross-encoder reranker
+]
+# Layer 6: evaluation harness
+eval = [
+    "ragas>=0.1",
+    "datasets>=2.20",
+    "pandas>=2.2",
+]
+# Developer tooling — install with: pip install -e ".[dev]"
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "httpx>=0.27",                 # TestClient for FastAPI (Layer 2+)
+    "ruff>=0.4",                   # linter + formatter (replaces black + flake8)
+    "mypy>=1.10",
+    "ipykernel>=6.29",             # Jupyter for exploration/experimentation
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# --- Ruff: linter + formatter ---
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+# E/F = pycodestyle/pyflakes, I = isort, UP = pyupgrade, B = flake8-bugbear
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+# --- Mypy: static type checking ---
+[tool.mypy]
+python_version = "3.11"
+strict = false                     # tighten to true in Layer 3+
+ignore_missing_imports = true
+packages = ["docuchat"]
+
+# --- Pytest ---
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
