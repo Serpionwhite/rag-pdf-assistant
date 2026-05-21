@@ -3,6 +3,7 @@
 from unittest.mock import MagicMock
 
 import pytest
+from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
 from docuchat.api.dependencies import get_chain
@@ -28,24 +29,31 @@ def test_chat_returns_answer(client: TestClient, mock_chain):
     # assert response status is 200
     # assert "answer" key is in response JSON
     # assert response JSON["answer"] is a non-empty string
-    ...
+    
+    response = client.post("/chat", json={"question": "What are RNNs?"})
+    assert response.status_code == 200
+    data = response.json()
 
+    assert "answer" in data
+    assert len(data['answer']) > 0
 
 def test_chat_empty_question_rejected(client: TestClient, mock_chain):
     # TODO: POST {"question": ""} to /chat
     # FastAPI validates min_length=1 on the question field
     # assert response status is 422 (Unprocessable Entity)
-    ...
+    
+    response = client.post("/chat", json={"question": ""})
+    assert response.status_code == 422
+
 
 
 def test_chat_no_documents_ingested(client: TestClient, app):
-    # TODO: override get_chain to raise HTTPException(503)
-    # This simulates the case where no PDF has been ingested yet
-    # assert response status is 503
-    #
-    # Hint:
-    #   from fastapi import HTTPException
-    #   from docuchat.api.dependencies import get_chain
-    #   def raise_503(): raise HTTPException(status_code=503, detail="...")
-    #   app.dependency_overrides[get_chain] = raise_503
-    ...
+    def raise_503():
+        raise HTTPException(status_code=503, detail="No documents ingested yet.")
+
+    app.dependency_overrides[get_chain] = raise_503
+
+    response = client.post("/chat", json={"question": "What are RNNs?"})
+    assert response.status_code == 503
+
+    app.dependency_overrides.clear()
