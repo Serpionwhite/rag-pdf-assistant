@@ -27,8 +27,6 @@ async def chat(request: ChatRequest, chain=Depends(get_chain)) -> ChatResponse:
         502: If the OpenAI API call fails.
         404: If no relevant chunks were found.
     """
-
-    
     
     try:
       answer = chain.invoke(request.question)
