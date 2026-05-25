@@ -39,8 +39,8 @@ def create_app() -> FastAPI:
     )
 
     # Register routers
-    from docuchat.api.routers.ingest import router as ingest_router
     from docuchat.api.routers.chat import router as chat_router
+    from docuchat.api.routers.ingest import router as ingest_router
 
     app.include_router(ingest_router)
     app.include_router(chat_router)

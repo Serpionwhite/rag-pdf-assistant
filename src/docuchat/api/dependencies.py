@@ -7,6 +7,7 @@ from fastapi import HTTPException
 from docuchat.config import get_settings
 from docuchat.ingestion.embedder import load_vectorstore
 from docuchat.retrieval.chain import build_qa_chain
+from docuchat.retrieval.retriever import build_retriever
 
 
 @lru_cache
@@ -27,10 +28,23 @@ def get_vectorstore():
 
 
 @lru_cache
+def get_retriever():
+    """Build the configured retriever from the persisted vectorstore.
+
+    Retriever strategy is controlled by ``settings.retriever_type``
+    ("similarity", "mmr", or "rerank"). Cached so the retriever is
+    constructed once and reused across requests.
+    """
+    vectorstore = get_vectorstore()
+    settings = get_settings()
+    return build_retriever(vectorstore, settings)
+
+
+@lru_cache
 def get_chain():
-    """Build the QA chain from the persisted vectorstore.
+    """Build the QA chain from the configured retriever.
 
     Cached so the chain is built once and reused across requests.
     """
-    vectorstore = get_vectorstore()
-    return build_qa_chain(vectorstore)
+    retriever = get_retriever()
+    return build_qa_chain(retriever)

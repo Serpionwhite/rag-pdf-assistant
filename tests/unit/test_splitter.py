@@ -1,5 +1,7 @@
-from docuchat.ingestion.splitter import split_documents
 from langchain_core.documents import Document
+
+from docuchat.ingestion.splitter import split_documents
+
 
 def test_split_produces_multiple_chunks():
     # Build a Document inline — no PDF needed

@@ -1,5 +1,7 @@
-import pytest 
+import pytest
+
 from docuchat.ingestion.loader import load_pdf
+
 
 def test_load_pdf_returns_documents(tmp_pdf_path):
     # call load_pdf with a valid PDF

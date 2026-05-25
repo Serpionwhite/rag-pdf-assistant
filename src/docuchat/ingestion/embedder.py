@@ -32,15 +32,15 @@ def build_vectorstore(
     Note:
         Requires ``OPENAI_API_KEY`` to be set in the environment.
     """
-    
+
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
     vector_store = Chroma.from_documents(
-             documents=chunks,
-             embedding=embeddings,
-             collection_name=COLLECTION_NAME,
-             persist_directory=str(persist_dir),
-         )
-    
+        documents=chunks,
+        embedding=embeddings,
+        collection_name=COLLECTION_NAME,
+        persist_directory=str(persist_dir),
+    )
+
     return vector_store
 
 
@@ -55,12 +55,12 @@ def load_vectorstore(persist_dir: str | Path = "chroma_db") -> Chroma:
     Returns:
         A ``Chroma`` instance ready to use as a retriever.
     """
-    
+
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
     vector_store = Chroma(
-             collection_name=COLLECTION_NAME,
-             persist_directory=str(persist_dir),
-             embedding_function=embeddings,
-         )
-    
+        collection_name=COLLECTION_NAME,
+        persist_directory=str(persist_dir),
+        embedding_function=embeddings,
+    )
+
     return vector_store
