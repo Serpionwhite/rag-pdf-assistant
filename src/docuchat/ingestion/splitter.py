@@ -29,7 +29,8 @@ def split_documents(
         List of smaller Document chunks. Each chunk inherits the
         ``metadata`` from its source document (source filename, page number).
     """
-    
 
-    splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size, chunk_overlap=chunk_overlap
+    )
     return splitter.split_documents(documents)

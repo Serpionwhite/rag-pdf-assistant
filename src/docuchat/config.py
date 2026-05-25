@@ -1,6 +1,8 @@
 """Application configuration loaded from environment variables / .env file."""
 
 from functools import lru_cache
+from typing import Literal
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -21,6 +23,13 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     chunk_size: int = 1000
     chunk_overlap: int = 200
+
+    # ── Layer 3: retrieval quality ─────────────────────────────────────────────
+    retriever_type: Literal["similarity", "mmr", "rerank"] = "similarity"
+    retriever_k: int = 4  # final chunks returned to the chain
+    fetch_k: int = 20  # candidates fetched before MMR or reranking
+    mmr_lambda_mult: float = 0.5  # 0 = max diversity, 1 = max relevance
+    reranker_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
     model_config = SettingsConfigDict(
         env_file=".env",

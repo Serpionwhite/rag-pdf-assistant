@@ -12,7 +12,7 @@ router = APIRouter()
 
 
 @router.post("/chat", response_model=ChatResponse)
-async def chat(request: ChatRequest, chain=Depends(get_chain)) -> ChatResponse:
+async def chat(request: ChatRequest, chain=Depends(get_chain)) -> ChatResponse:  # noqa: B008
     """Answer a question using the ingested documents.
 
     Args:
@@ -27,14 +27,18 @@ async def chat(request: ChatRequest, chain=Depends(get_chain)) -> ChatResponse:
         502: If the OpenAI API call fails.
         404: If no relevant chunks were found.
     """
-    
+
     try:
-      answer = chain.invoke(request.question)
+        answer = chain.invoke(request.question)
     except Exception as e:
-        raise HTTPException(status_code=502, detail="Failed to get answer from LLM.")
-    
+        raise HTTPException(
+            status_code=502, detail="Failed to get answer from LLM."
+        ) from e
+
     if not answer:
-            raise HTTPException(status_code=404, detail="No relevant information found for your question.")
+        raise HTTPException(
+            status_code=404, detail="No relevant information found for your question."
+        )
 
     logger.info("Q: %s | A: %s", request.question, answer[:100])
     return ChatResponse(answer=answer, source_pages=[])

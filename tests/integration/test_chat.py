@@ -25,10 +25,6 @@ def mock_chain(app):
 
 
 def test_chat_returns_answer(client: TestClient, mock_chain):
-    # TODO: POST {"question": "What are RNNs?"} to /chat
-    # assert response status is 200
-    # assert "answer" key is in response JSON
-    # assert response JSON["answer"] is a non-empty string
     
     response = client.post("/chat", json={"question": "What are RNNs?"})
     assert response.status_code == 200
@@ -38,9 +34,6 @@ def test_chat_returns_answer(client: TestClient, mock_chain):
     assert len(data['answer']) > 0
 
 def test_chat_empty_question_rejected(client: TestClient, mock_chain):
-    # TODO: POST {"question": ""} to /chat
-    # FastAPI validates min_length=1 on the question field
-    # assert response status is 422 (Unprocessable Entity)
     
     response = client.post("/chat", json={"question": ""})
     assert response.status_code == 422

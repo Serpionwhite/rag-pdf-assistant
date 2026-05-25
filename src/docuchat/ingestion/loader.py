@@ -25,11 +25,9 @@ def load_pdf(path: str | Path) -> list[Document]:
     file_path = Path(path)
     if not file_path.is_file():
         raise FileNotFoundError(f"Path not found : {path}")
-    
+
     loader = PyPDFLoader(str(path))
 
     docs = loader.load()
 
     return docs
-
-
